@@ -12,15 +12,11 @@ export class LayoutSettingsModal extends Modal {
     };
 
     editor: EditorView;
-
-    randomValue: string;
-    randomBool: boolean;
-
     saved: boolean;
     constructor(app: App, settings: LayoutSettings) {
         super(app);
 
-        this.settings = { ...settings, ...DEFAULT_LAYOUT_SETTINGS };
+        this.settings = { ...DEFAULT_LAYOUT_SETTINGS, ...settings };
     }
 
     onOpen() {
@@ -42,27 +38,6 @@ export class LayoutSettingsModal extends Modal {
     }
 
     buildSettings(el: HTMLElement) {
-        new Setting(el)
-            .setName("Section Heading")
-            .setDesc(
-                "This text will be used for the section heading. Can be left blank."
-            )
-            .addText((t) => {
-                t.setValue(this.randomValue).onChange(
-                    (v) => (this.randomValue = v)
-                );
-            });
-        new Setting(el)
-            .setName("Has Rule")
-            .setDesc(
-                "If present, the block will have a horizontal rule placed after it."
-            )
-            .addToggle((t) => {
-                t.setValue(this.randomBool).onChange(
-                    (v) => (this.randomBool = v)
-                );
-            });
-
         new Setting(el)
             .setHeading()
             .setName("Default Saves Modifier Calculation")
