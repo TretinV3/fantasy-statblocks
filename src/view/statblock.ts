@@ -29,6 +29,7 @@ import type {
 import type Collapse from "./ui/Collapse.svelte";
 import { append } from "src/util/util";
 import { Linkifier } from "src/util/linkify";
+import { DEFAULT_LAYOUT_SETTINGS } from "src/main";
 
 type RendererParameters = {
     container: HTMLElement;
@@ -86,6 +87,11 @@ export default class StatBlockRenderer extends MarkdownRenderChild {
                     layout.name ==
                         (this.params.statblock ?? this.monster.statblock)
             ) ?? this.plugin.defaultLayout;
+
+        this.layout.settings = {
+            ...DEFAULT_LAYOUT_SETTINGS,            
+            ...this.layout.settings,
+        }
     }
     get canSave() {
         return "name" in this.params;

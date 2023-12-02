@@ -1,41 +1,42 @@
 <script lang="ts">
     import type { Monster } from "index";
-    import type { SavesItem } from "types/layout";
+    import type { LayoutSettings, SavesItem } from "types/layout";
     import { toTitleCase } from "src/util/util";
-    import { getContext } from "svelte";
+    import { getAllContexts, getContext } from "svelte";
     import TextContentHolder from "./TextContentHolder.svelte";
 
     export let monster: Monster;
     export let item: SavesItem;
 
+
+    const settings = getContext<LayoutSettings>("layoutSettings");
+    
     function getMod(value: string | number) {
         let mod;
+
+        let func;
+        let modifier = item.modifier;
         if (
             item.modifier == null ||
             !item.modifier.length ||
             item.modifier == ""
         ) {
-            if(typeof value == "string" || isNaN(Number(value))){
-                mod =  value;
-            } else {
-                mod = Math.floor(((Number(value) ?? 10) - 10) / 2);
-            }
-        } else {
-            const func = item.modifier.contains("return")
-                ? item.modifier
-                : `return ${item.modifier}`;
-            const customMod = new Function("value", func);
-            mod = customMod(value);
-            console.log('customMod', customMod)
-            console.log('customModV', customMod(value))
-            console.log("func", func)
-        }
-        console.log('mod', mod, 'value', value)
-
-        if(typeof mod == "string" && isNaN(Number(mod))){
-            return `${mod}`;
+            modifier = settings.defaultSavesModifier
         }else {
+            modifier = item.modifier
+        }
+
+        func = modifier.contains("return")
+            ? modifier
+            : `return ${modifier}`;
+        const customMod = new Function("value", func);
+        const argument = isNaN(Number(value)) ? value : Number(value);
+        mod = customMod(argument);
+
+        if(typeof mod == "number"){
             return `${mod >= 0 ? "+" : "-"}${Math.abs(mod)}`;
+        }else {
+            return `${mod}`;
         }
     }
 
@@ -51,7 +52,9 @@
             if (!key) return null;
             const value = Object.values(ability)[0];
             if (!value) return null;
-            return `${toTitleCase(key)} ${item.calculate ? getMod(value as (string | number)) : ''}`;
+
+            // type check item.calculate allow a default to true
+            return `${toTitleCase(key)} ${item.calculate === false ? '' : getMod(value as (string | number))}`;
         })
         .filter((m) => m)
         .join(", ");

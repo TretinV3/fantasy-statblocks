@@ -40,7 +40,8 @@ export function blockGenerator(type: string): StatblockItem {
             return {
                 type: "saves",
                 id: nanoid(),
-                properties: []
+                properties: [],
+                calculate: true
             };
         }
         case "traits": {

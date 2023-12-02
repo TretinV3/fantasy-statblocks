@@ -235,10 +235,16 @@ export interface StatblockItemMap
     collapse: CollapseItem;
 }
 
+export interface LayoutSettings {
+    defaultSavesModifier: string;
+    defaultTableModifier: string;
+}
+
 export interface Layout {
     name: string;
     id: string;
     blocks: StatblockItem[];
+    settings: LayoutSettings;
 }
 
 export interface DefaultLayout extends Layout {

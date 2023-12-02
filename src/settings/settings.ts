@@ -20,12 +20,13 @@ import Importer from "src/importers/importer";
 import { FolderSuggestionModal } from "src/util/folder";
 import { EditMonsterModal, ViewMonsterModal } from "./modal";
 import { Layout5e } from "src/layouts/basic 5e/basic5e";
-import type { DefaultLayout, Layout } from "types/layout";
+import type { DefaultLayout, Layout, LayoutSettings } from "types/layout";
 import { DefaultLayouts } from "src/layouts";
 import { nanoid, stringify } from "src/util/util";
-import { DICE_ROLLER_SOURCE } from "src/main";
+import { DEFAULT_LAYOUT_SETTINGS, DICE_ROLLER_SOURCE } from "src/main";
 import type { Monster } from "index";
 import { ExpectedValue } from "obsidian-overload";
+
 
 export default class StatblockSettingTab extends PluginSettingTab {
     importer: Importer;
@@ -402,6 +403,9 @@ export default class StatblockSettingTab extends PluginSettingTab {
                                     );
                                     return;
                                 }
+                                if (!layout?.settings) {
+                                    layout.settings = DEFAULT_LAYOUT_SETTINGS;
+                                }
                                 if (
                                     !this.plugin.settings.alwaysImport &&
                                     layout.blocks.find(
@@ -526,7 +530,11 @@ export default class StatblockSettingTab extends PluginSettingTab {
         return {
             blocks: fastCopy(layout.blocks),
             name,
-            id: nanoid()
+            id: nanoid(),
+            settings: {
+                ...DEFAULT_LAYOUT_SETTINGS,
+                ...layout.settings
+            }
         };
     }
     buildCustomLayouts(
@@ -1169,7 +1177,11 @@ class CreateStatblockModal extends Modal {
         layout: Layout = {
             name: "Layout",
             blocks: [],
-            id: nanoid()
+            id: nanoid(),
+            settings: {
+                defaultSavesModifier: "",
+                defaultTableModifier: ""
+            }
         }
     ) {
         super(plugin.app);

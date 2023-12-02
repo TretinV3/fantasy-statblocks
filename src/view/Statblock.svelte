@@ -8,7 +8,7 @@
         stringifyYaml
     } from "obsidian";
     import { EXPORT_SYMBOL, SAVE_SYMBOL } from "src/data/constants";
-    import type { StatblockItem } from "types/layout";
+    import type { Layout, LayoutSettings, StatblockItem } from "types/layout";
     import type StatBlockPlugin from "src/main";
     import {
         createEventDispatcher,
@@ -56,6 +56,7 @@
     setContext<boolean>("dice", canDice);
     setContext<boolean>("render", canRender);
     setContext<StatBlockRenderer>("renderer", renderer);
+    setContext<LayoutSettings>("layoutSettings", plugin.layouts.find((l) => l.name == layout).settings);
 
     const reset = writable<boolean>(false);
     setContext<Writable<boolean>>("reset", reset);

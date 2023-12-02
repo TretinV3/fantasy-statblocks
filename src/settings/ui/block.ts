@@ -907,7 +907,7 @@ class TableModal extends BasicModal<TableItem> {
                     });
                     e.createEl("br");
                     e.createSpan({ text: "Variable " });
-                    e.createEl("code", { text: "stat" });
+                    e.createEl("code", { text: "value" });
                     e.createSpan({
                         text: "is accessible, use this to calculate the modifier."
                     });

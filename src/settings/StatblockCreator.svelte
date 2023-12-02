@@ -12,6 +12,7 @@
 
     import { blockGenerator, generate } from "./add";
     import Creator from "./ui/Creator.svelte";
+    import { LayoutSettingsModal } from "./ui/layoutSettings";
 
     export let layout: Layout;
     export let plugin: StatBlockPlugin;
@@ -111,11 +112,29 @@
             .setIcon("plus-with-circle")
             .setTooltip("Add Block");
     };
+
+    const config = async (e: MouseEvent) => {
+        const modal = new LayoutSettingsModal(this.app, layout.settings);
+        modal.onClose = () => {
+            if(modal.saved){
+                layout.settings = modal.settings;
+            }
+        }
+        modal.open()
+    };
+    const configButton = (node: HTMLDivElement) => {
+        new ExtraButtonComponent(node)
+            .setIcon("settings")
+            .setTooltip("Open Settings");
+    };
 </script>
 
 <div class="top">
     <div class="name" use:name />
-    <div class="add" use:addButton on:click={(evt) => add(evt)} />
+    <div class="actions">
+        <div class="config" use:configButton on:click={(evt) => config(evt)} />
+        <div class="add" use:addButton on:click={(evt) => add(evt)} />
+    </div>
 </div>
 <div class="creator-container">
     {#key layout}
@@ -133,6 +152,10 @@
 </div>
 
 <style>
+    .actions {
+        display: flex;
+    }
+
     .top {
         display: flex;
         align-items: center;

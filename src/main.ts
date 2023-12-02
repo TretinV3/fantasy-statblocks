@@ -28,7 +28,7 @@ import {
     HomebrewCreature
 } from "obsidian-overload";
 import { Watcher } from "./watcher/watcher";
-import type { Layout, ParsedDice, StatblockItem } from "../types/layout";
+import type { Layout, LayoutSettings, ParsedDice, StatblockItem } from "../types/layout";
 import { Layout5e } from "./layouts/basic 5e/basic5e";
 import { StatblockSuggester } from "./suggest";
 import { DefaultLayouts } from "./layouts";
@@ -91,6 +91,11 @@ const DEFAULT_DATA: StatblockData = {
     defaultLayoutsIntegrated: false,
     atomicWrite: true
 };
+
+export const DEFAULT_LAYOUT_SETTINGS: LayoutSettings = {
+    defaultSavesModifier: `Math.floor(((value ?? 10) - 10) / 2)`,
+    defaultTableModifier: `Math.floor(((value ?? 10) - 10) / 2)`,
+}
 
 export default class StatBlockPlugin extends Plugin implements StatblockAPI {
     settings: StatblockData;

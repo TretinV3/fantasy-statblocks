@@ -1,36 +1,43 @@
 <script lang="ts">
     import type { Monster } from "index";
-    import type { TableItem } from "types/layout";
+    import type { LayoutSettings, TableItem } from "types/layout";
     import { stringify } from "src/util/util";
     import TextContentHolder from "./TextContentHolder.svelte";
+  import { getContext } from "svelte";
 
     export let monster: Monster;
     export let item: TableItem;
 
-    function getMod(stat: string | number) {
+    const settings = getContext<LayoutSettings>('layoutSettings')
+
+    function getMod(value: string | number) {
         let mod;
+
+        let func;
+        let modifier;
         if (
             item.modifier == null ||
             !item.modifier.length ||
             item.modifier == ""
         ) {
-            if(typeof stat == "string" || isNaN(Number(stat))){
-                mod =  stat;
-            } else {
-                mod = Math.floor(((stat ?? 10) - 10) / 2);
-            }
+            modifier = settings.defaultTableModifier
         } else {
-            const func = item.modifier.contains("return")
-                ? item.modifier
-                : `return ${item.modifier}`;
-            const customMod = new Function("stat", func);
-            mod = customMod(stat);
+            modifier = item.modifier
         }
 
-        if(typeof mod == "string" || isNaN(Number(mod))){
-            return `${mod}`;
+        func = modifier.contains("return")
+            ? modifier
+            : `return ${modifier}`;
+
+        // Allow both "value" and "stat" syntax while transitioning
+        const customMod = new Function("value", "stat", func);
+        const argument = isNaN(Number(value)) ? value : Number(value);
+        mod = customMod(argument, argument);
+
+        if(typeof mod == "number"){
+            return `(${mod >= 0 ? "+" : "-"}${Math.abs(mod)})`;
         }else {
-            return `${mod >= 0 ? "+" : "-"}${Math.abs(mod)}`;
+            return `${mod}`;
         }
     }
 
@@ -65,7 +72,7 @@
             {#each values as value}
                 <span>
                     <TextContentHolder property={stringify(value)} />
-                    {#if item.calculate}
+                    {#if !(item.calculate === false)}
                         <span>
                             {getMod(value)}
                         </span>
