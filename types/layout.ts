@@ -70,6 +70,11 @@ type GenericTextProp = {
     markdown?: boolean;
 };
 
+type ModifierTextProp = {
+    calculate: boolean;
+    modifier?: string;
+};
+
 type GroupProps = {
     type: "group";
     heading?: string;
@@ -110,8 +115,6 @@ type SubHeadingProps = {
 type TableProps = {
     type: "table";
     headers: string[];
-    calculate: boolean;
-    modifier?: string;
 };
 type TraitsProps = {
     type: "traits";
@@ -165,11 +168,11 @@ export type GroupItem = CommonProps & GroupProps;
 export type HeadingItem = CommonProps & HeadingProps;
 export type InlineItem = CommonProps & InlineProps;
 export type PropertyItem = CommonProps & PropertyProps & GenericTextProp;
-export type SavesItem = CommonProps & SavesProps & GenericTextProp;
+export type SavesItem = CommonProps & SavesProps & ModifierTextProp & GenericTextProp;
 export type TraitsItem = CommonProps & TraitsProps & GenericTextProp;
 export type SpellsItem = CommonProps & SpellsProps & GenericTextProp;
 export type SubHeadingItem = CommonProps & SubHeadingProps;
-export type TableItem = CommonProps & TableProps;
+export type TableItem = CommonProps & TableProps & ModifierTextProp;
 export type ImageItem = CommonProps & ImageProps;
 export type TextItem = CommonProps & TextProps & GenericTextProp;
 

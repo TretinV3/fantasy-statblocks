@@ -7,15 +7,18 @@
     export let monster: Monster;
     export let item: TableItem;
 
-    function getMod(stat: number) {
-        if (typeof stat != "number") return ``;
+    function getMod(stat: string | number) {
         let mod;
         if (
             item.modifier == null ||
             !item.modifier.length ||
             item.modifier == ""
         ) {
-            mod = Math.floor(((stat ?? 10) - 10) / 2);
+            if(typeof stat == "string" || isNaN(Number(stat))){
+                mod =  stat;
+            } else {
+                mod = Math.floor(((stat ?? 10) - 10) / 2);
+            }
         } else {
             const func = item.modifier.contains("return")
                 ? item.modifier
@@ -23,7 +26,12 @@
             const customMod = new Function("stat", func);
             mod = customMod(stat);
         }
-        return `(${mod >= 0 ? "+" : "-"}${Math.abs(mod)})`;
+
+        if(typeof mod == "string" || isNaN(Number(mod))){
+            return `${mod}`;
+        }else {
+            return `${mod >= 0 ? "+" : "-"}${Math.abs(mod)}`;
+        }
     }
 
     let values: any[] = monster[item.properties[0]] as any[];

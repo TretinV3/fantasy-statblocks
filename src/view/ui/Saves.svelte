@@ -8,8 +8,35 @@
     export let monster: Monster;
     export let item: SavesItem;
 
-    function getMod(value: number) {
-        return `${value > 0 ? "+" : ""}${value}`;
+    function getMod(value: string | number) {
+        let mod;
+        if (
+            item.modifier == null ||
+            !item.modifier.length ||
+            item.modifier == ""
+        ) {
+            if(typeof value == "string" || isNaN(Number(value))){
+                mod =  value;
+            } else {
+                mod = Math.floor(((Number(value) ?? 10) - 10) / 2);
+            }
+        } else {
+            const func = item.modifier.contains("return")
+                ? item.modifier
+                : `return ${item.modifier}`;
+            const customMod = new Function("value", func);
+            mod = customMod(value);
+            console.log('customMod', customMod)
+            console.log('customModV', customMod(value))
+            console.log("func", func)
+        }
+        console.log('mod', mod, 'value', value)
+
+        if(typeof mod == "string" && isNaN(Number(mod))){
+            return `${mod}`;
+        }else {
+            return `${mod >= 0 ? "+" : "-"}${Math.abs(mod)}`;
+        }
     }
 
     let arr: any[] = monster[item.properties[0]] as any[];
@@ -23,10 +50,8 @@
             let key = Object.keys(ability)[0];
             if (!key) return null;
             const value = Object.values(ability)[0];
-            if (typeof value == "string" && isNaN(Number(value)))
-                return `${toTitleCase(key)} ${value}`;
-            if (!value || isNaN(Number(value))) return null;
-            return `${toTitleCase(key)} ${getMod(value as number)}`;
+            if (!value) return null;
+            return `${toTitleCase(key)} ${item.calculate ? getMod(value as (string | number)) : ''}`;
         })
         .filter((m) => m)
         .join(", ");

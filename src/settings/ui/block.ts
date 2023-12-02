@@ -775,6 +775,50 @@ class SavesModal extends MarkdownEnabledModal<SavesItem> {
                     (v) => (this.block.display = v)
                 );
             });
+        new Setting(el)
+            .setName("Calculate Modifiers")
+            .setDesc(
+                "The block will not attempt to calculate modifiers for table values."
+            )
+            .addToggle((t) => {
+                t.setValue(this.block.calculate).onChange((v) => {
+                    this.block.calculate = v;
+                });
+            });
+    }
+    buildAdvanced(el: HTMLDivElement): void {
+        super.buildAdvanced(el);
+            new Setting(el)
+            .setHeading()
+            .setName("Modifier Calculation")
+            .setDesc(
+                createFragment((e) => {
+                    e.createSpan({
+                        text: "Allows a custom modifier for the stat."
+                    });
+                    e.createEl("br");
+                    e.createSpan({ text: "Variable " });
+                    e.createEl("code", { text: "value" });
+                    e.createSpan({
+                        text: "is accessible, use this to calculate the modifier."
+                    });
+                })
+            );
+        const component = new TextAreaComponent(el).setValue(
+            this.block.modifier
+        );
+        component.inputEl.addClasses([
+            "statblock-textarea",
+            "statblock-textarea-small"
+        ]);
+        this.editor = editorFromTextArea(
+            component.inputEl,
+            EditorView.updateListener.of((update) => {
+                if (update.docChanged) {
+                    this.block.modifier = update.state.doc.toString();
+                }
+            })
+        );
     }
 }
 class SpellsModal extends MarkdownEnabledModal<SpellsItem> {
